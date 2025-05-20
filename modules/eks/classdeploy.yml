@@ -1,32 +1,32 @@
 
-# ---
-# apiVersion: apps/v1
-# kind: Deployment
-# metadata:
-#   name: class-deploy
-# spec:
-#   replicas: 3
-#   selector:
-#     matchLabels: 
-#       app: class
-#   template:
-#     metadata: 
-#       labels:
-#         app: class
-#     spec:
-#       containers:
-#         - name: class-ctn
-#           image: nginx
-#           ports:
-#           - containerPort: 80
-#           resources: 
-#             limits:
-#               memory: "1Gi"
-#               cpu: '1'
-#             request:
-#               memory: "1Gi"
-#               cpu: '1'
-#       volumes:
-#         - name: class-volume
-#           persistentVolumeClaim:
-#             claimName: class-pvc
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: class-deploy
+spec:
+  replicas: 3
+  selector:
+    matchLabels: 
+      app: class
+  template:
+    metadata: 
+      labels:
+        app: class
+    spec:
+      containers:
+        - name: class-ctn
+          image: nginx
+          ports:
+          - containerPort: 80
+          resources: 
+            limits:
+              memory: "1Gi"
+              cpu: '1'
+            request:
+              memory: "1Gi"
+              cpu: '1'
+      volumes:
+        - name: class-volume
+          persistentVolumeClaim:
+            claimName: class-pvc
