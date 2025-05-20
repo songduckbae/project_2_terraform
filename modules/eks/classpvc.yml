@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: PersistanceVolumeClaim
+metadata:
+  name: class-pvc
+spec: 
+  storageClassName:
+  accessModes:
+    - ReadWriteOany
+  resources:
+    requests:
+      storage: 5Gi
+  storageClassName: pj-sc
