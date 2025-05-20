@@ -1,4 +1,4 @@
-# # 헬름 차트를 이용한 alb-controller 설치치
+# # # 헬름 차트를 이용한 alb-controller 설치치
 # resource "helm_release" "alb_controller" {
 #   name       = "aws-load-balancer-controller"
 #   namespace  = "kube-system"

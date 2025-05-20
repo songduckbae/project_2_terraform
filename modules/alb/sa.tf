@@ -1,4 +1,4 @@
-#IAM role 생성
+# # IAM role 생성
 # resource "aws_iam_role" "alb_sa_role" {
 #   name = "eks-alb-controller-role"
 
@@ -21,13 +21,13 @@
 #   })
 # }
 
-# IAM 정책 연결 alb_controller 연결
+# # IAM 정책 연결 alb_controller 연결
 # resource "aws_iam_role_policy_attachment" "alb_sa_attach" {
 #   role       = aws_iam_role.alb_sa_role.name
 #   policy_arn = aws_iam_policy.alb_controller.arn
 # }
 
-# 서비스 어카운트 생성 
+# # 서비스 어카운트 생성 
 # resource "kubernetes_service_account" "alb_sa" {
 #   metadata {
 #     name      = "aws-load-balancer-controller"

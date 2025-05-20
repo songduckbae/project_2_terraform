@@ -1,19 +1,35 @@
 # apiVersion: networking.k8s.io/v1
 # kind: Ingress
 # metadata:
-#   name: my-ingress
+#   name: univ-ingress
+#   namespace: default
 #   annotations:
 #     kubernetes.io/ingress.class: alb
 #     alb.ingress.kubernetes.io/scheme: internet-facing
-#     alb.ingress.kubernetes.io/security-groups:
+#     alb.ingress.kubernetes.io/target-type: ip
+#     alb.ingress.kubernetes.io/listen-ports: '[{"HTTP": 80}]'
 # spec:
 #   rules:
 #     - http:
 #         paths:
-#           - path: /*
-#             pathType: ImplementationSpecific
+#           - path: /cert
+#             pathType: Prefix
 #             backend:
 #               service:
-#                 name: my-service
+#                 name: cert-service
+#                 port:
+#                   number: 80
+#           - path: /class
+#             pathType: Prefix
+#             backend:
+#               service:
+#                 name: class-service
+#                 port:
+#                   number: 80
+#           - path: /home
+#             pathType: Prefix
+#             backend:
+#               service:
+#                 name: home-service
 #                 port:
 #                   number: 80
