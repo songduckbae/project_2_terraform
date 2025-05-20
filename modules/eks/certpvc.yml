@@ -3,10 +3,9 @@ kind: PersistentVolumeClaim
 metadata:
   name: cert-pvc
 spec: 
-  storageClassName:
+  storageClassName: pj-sc
   accessModes:
-    - ReadWriteOany
+    - ReadWriteOnce
   resources:
     requests:
       storage: 5Gi
-  storageClassName: pj-sc
