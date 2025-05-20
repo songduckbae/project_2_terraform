@@ -68,7 +68,7 @@ resource "aws_route_table_association" "public_assoc" {
 # EIP
 resource "aws_eip" "nat_eips" {
   count = length(var.azs)
-  vpc   = true
+  domain = "vpc"
 }
 
 # Nat Gateway

@@ -1,32 +1,32 @@
 
----
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: home-deploy
-spec:
-  replicas: 3
-  selector:
-    matchLabels: 
-      app: home
-  template:
-    metadata: 
-      labels:
-        app: home
-    spec:
-      containers:
-        - name: home-ctn
-          image: nginx
-          ports:
-          - containerPort: 80
-          resources: 
-            limits:
-              memory: "1Gi"
-              cpu: '1'
-            request:
-              memory: "1Gi"
-              cpu: '1'
-      volumes:
-        - name: home-volume
-          persistentVolumeClaim:
-            claimName: home-pvc
+# ---
+# apiVersion: apps/v1
+# kind: Deployment
+# metadata:
+#   name: home-deploy
+# spec:
+#   replicas: 3
+#   selector:
+#     matchLabels: 
+#       app: home
+#   template:
+#     metadata: 
+#       labels:
+#         app: home
+#     spec:
+#       containers:
+#         - name: home-ctn
+#           image: nginx
+#           ports:
+#           - containerPort: 80
+#           resources: 
+#             limits:
+#               memory: "1Gi"
+#               cpu: '1'
+#             request:
+#               memory: "1Gi"
+#               cpu: '1'
+#       volumes:
+#         - name: home-volume
+#           persistentVolumeClaim:
+#             claimName: home-pvc
