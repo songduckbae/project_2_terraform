@@ -40,5 +40,5 @@ spec:
               cpu: '1'
       volumes:
         - name: home-volume
-          PersistanceVolumeClaim:
+          PersistentVolumeClaim:
             claimName: home-pvc
