@@ -14,6 +14,7 @@ module "eks" {
 
 #  VPC 정보 조회
 data "aws_vpc" "eks_vpc" {
+  depends_on = [module.vpc]
   filter {
     name   = "tag:Name"
     values = ["eks-vpc"]
