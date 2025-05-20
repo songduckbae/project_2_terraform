@@ -6,4 +6,3 @@
 *.zip
 *.tar.gz
 *.plan
-.terraform.lock.hcl
