@@ -12,6 +12,17 @@ module "eks" {
   subnet_ids         = module.vpc.public_subnet_ids
 }
 
+module "k8s" {
+  source = "./modules/k8s"
+
+  providers = {
+    kubernetes = kubernetes.eks
+    helm       = helm
+  }
+}
+
+
+
 #  VPC 정보 조회
 data "aws_vpc" "eks_vpc" {
   depends_on = [module.vpc]

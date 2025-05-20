@@ -43,7 +43,38 @@ data "aws_eks_cluster" "eks" {
   name = var.cluster_name
 }
 
+data "aws_eks_cluster_auth" "eks" {
+  name = var.cluster_name
+}
+
 # # EKS에서 자동 생성된 OIDC Provider 정보 가져오기
 data "aws_iam_openid_connect_provider" "oidc" {
   url = data.aws_eks_cluster.eks.identity[0].oidc[0].issuer
+}
+
+resource "kubernetes_config_map" "aws_auth" {
+  metadata {
+    name      = "aws-auth"
+    namespace = "kube-system"
+  }
+
+  data = {
+    mapRoles = yamlencode([
+      {
+        rolearn  = "arn:aws:sts::886723286293:assumed-role/AWSReservedSSO_AdministratorAccess_be811d95ad9f0f4a/your-session"
+        username = "admin"
+        groups   = ["system:masters"]
+      },
+      {
+        rolearn  = aws_iam_role.univ_nodegroup_role.arn
+        username = "system:node:{{EC2PrivateDNSName}}"
+        groups   = ["system:bootstrappers", "system:nodes"]
+      }
+    ])
+  }
+
+  depends_on = [
+    aws_eks_cluster.univ_eks,
+    aws_eks_node_group.univ_ng
+  ]
 }

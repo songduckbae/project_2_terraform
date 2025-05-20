@@ -63,20 +63,8 @@ resource "aws_eks_node_group" "univ_ng" {
   depends_on = [
     aws_iam_role_policy_attachment.univ-ng-AmazonEKSWorkerNodePolicy,
     aws_iam_role_policy_attachment.univ-ng-AmazonEKS_CNI_Policy,
-    aws_iam_role_policy_attachment.univ-ng-AmazonEC2ContainerRegistryReadOnly         # example- 이게 맞나?
+    aws_iam_role_policy_attachment.univ-ng-AmazonEC2ContainerRegistryReadOnly
   ]
-
-  tags = {
-    "Name" = "univ-ng-node"   
-  }
-
-  labels = {
-    "eks/nodegroup-name" = "univ_ng"
-  }
-
-  tags_all = {
-    "Name" = "univ-ng-node"
-  }
 }
 
 resource "aws_iam_role" "univ_nodegroup_role" {
@@ -110,56 +98,25 @@ resource "aws_iam_role_policy_attachment" "univ-ng-AmazonEC2ContainerRegistryRea
   role       = aws_iam_role.univ_nodegroup_role.name
 }
 
-# # # mainfest를 이용해서 테라폼에서 yml 파일 사용하기
-# #테라폼에게 나는 쿠버네티스 리소스를 다룰거야 선언언
-# provider "kubernetes" {
-#   config_path = "~/.kube/config"  # 쿠버네티스 클러스터에 접속하기 위한 kubeconfig 파일 경로 지정/ 로컬에 저장된 kubeconfig 경로
-# }
+resource "aws_iam_role_policy_attachment" "ebs_csi_policy" {
+  role       = aws_iam_role.univ_nodegroup_role.name
+  policy_arn = "arn:aws:iam::aws:policy/AmazonEBSCSIDriverPolicy"
+}
 
-# # StorageClass (공통)
-# resource "kubernetes_manifest" "sc" {
-#   manifest = yamldecode(file("${path.module}/csi.yml"))
-# }
+# 현재 AWS 계정 ID를 가져오기 위한 데이터 소스
+data "aws_caller_identity" "current" {}
 
-# # PVC
-# resource "kubernetes_manifest" "cert_pvc" {
-#   manifest = yamldecode(file("${path.module}/certpvc.yml"))
-# }
+resource "aws_eks_access_entry" "sso_admin" {
+  cluster_name  = aws_eks_cluster.univ_eks.name
+  principal_arn = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/aws-reserved/sso.amazonaws.com/ap-northeast-2/AWSReservedSSO_AdministratorAccess_be811d95ad9f0f4a" # SSO 역할 ARN
+}
 
-# resource "kubernetes_manifest" "class_pvc" {
-#   manifest = yamldecode(file("${path.module}/classpvc.yml"))
-# }
+resource "aws_eks_access_policy_association" "sso_admin_policy" {
+  cluster_name  = aws_eks_cluster.univ_eks.name
+  principal_arn = aws_eks_access_entry.sso_admin.principal_arn
+  policy_arn    = "arn:aws:eks::aws:cluster-access-policy/AmazonEKSClusterAdminPolicy"
 
-# resource "kubernetes_manifest" "home_pvc" {
-#   manifest = yamldecode(file("${path.module}/homepvc.yml"))
-# }
-
-# # Deployments 
-# resource "kubernetes_manifest" "cert_deploy" {
-#   manifest = yamldecode(file("${path.module}/certdeploy.yml"))
-# }
-
-# resource "kubernetes_manifest" "class_deploy" {
-#   manifest = yamldecode(file("${path.module}/classdeploy.yml"))
-# }
-
-# resource "kubernetes_manifest" "home_deploy" {
-#   manifest = yamldecode(file("${path.module}/homedeploy.yml"))
-# }
-
-# # Service
-# resource "kubernetes_manifest" "cert_service" {
-#   manifest = yamldecode(file("${path.module}/certsvc.yml"))
-# }
-
-# resource "kubernetes_manifest" "class_service" {
-#   manifest = yamldecode(file("${path.module}/classsvc.yml"))
-# }
-
-# resource "kubernetes_manifest" "home_service" {
-#   manifest = yamldecode(file("${path.module}/homesvc.yml"))
-# }
-
-# resource "kubernetes_manifest" "ingress" {
-#   manifest = yamldecode(file("${path.module}/ingress.yml"))
-# }
+  access_scope {
+    type = "cluster"
+  }
+}
