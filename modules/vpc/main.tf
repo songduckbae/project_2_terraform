@@ -7,6 +7,10 @@ resource "aws_vpc" "eks_vpc" {
   tags = {
     Name = var.vpc_name
   }
+
+  lifecycle {
+    prevent_destroy = true
+  }
 }
 
 # public_subnets

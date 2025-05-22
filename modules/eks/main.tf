@@ -48,7 +48,7 @@ resource "aws_eks_node_group" "univ_ng" {
   node_group_name = "univ_ng"
   node_role_arn   = aws_iam_role.univ_nodegroup_role.arn
   subnet_ids      = var.private_subnet_ids
-  instance_types = ["t3.small"]
+  instance_types = ["t3a.2xlarge"]
 
   scaling_config {
     desired_size = 3
@@ -100,7 +100,7 @@ resource "aws_iam_role_policy_attachment" "univ-ng-AmazonEC2ContainerRegistryRea
 
 resource "aws_iam_role_policy_attachment" "ebs_csi_policy" {
   role       = aws_iam_role.univ_nodegroup_role.name
-  policy_arn = "arn:aws:iam::aws:policy/AmazonEBSCSIDriverPolicy"
+  policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonEBSCSIDriverPolicy"
 }
 
 # 현재 AWS 계정 ID를 가져오기 위한 데이터 소스
@@ -119,4 +119,10 @@ resource "aws_eks_access_policy_association" "sso_admin_policy" {
   access_scope {
     type = "cluster"
   }
+}
+
+resource "aws_iam_openid_connect_provider" "oidc" {
+  url = aws_eks_cluster.univ_eks.identity[0].oidc[0].issuer
+  client_id_list = ["sts.amazonaws.com"]
+  thumbprint_list = ["9e99a48a9960b14926bb7f3b02e22da0ecd2e0f4"]
 }

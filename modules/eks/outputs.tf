@@ -21,3 +21,12 @@ output "cluster_role_name" {
 output "cluster_ca" {
   value = aws_eks_cluster.univ_eks.certificate_authority[0].data
 }
+
+output "node_group_role_arn" {
+  value = aws_iam_role.univ_nodegroup_role.arn
+}
+
+output "oidc_provider_arn" {
+  description = "OIDC provider ARN"
+  value       = aws_iam_openid_connect_provider.oidc.arn
+}

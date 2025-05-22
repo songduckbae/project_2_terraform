@@ -1,65 +1,30 @@
-terraform {
-  required_providers {
-    aws = {
-      source  = "hashicorp/aws"
-      version = "5.86.0"
-    }
-
-    kubernetes = {
-      source  = "hashicorp/kubernetes"
-      version = "2.29.0"
-    }
-
-    helm = {
-      source  = "hashicorp/helm"
-      version = "2.13.2"
-    }
-  }
-}
-
-# Configure the AWS Provider
 provider "aws" {
   region = "ap-northeast-2"
 }
 
-# EKS 클러스터 정보 가져오기
-data "aws_eks_cluster" "eks" {
-  name = var.cluster_name
-
-  depends_on = [module.eks]
-}
-
-# EKS 인증 토큰
-data "aws_eks_cluster_auth" "eks" {
-  name = var.cluster_name
-
-  depends_on = [module.eks]
-}
 
 provider "kubernetes" {
-  config_path = "~/.kube/config" # or dummy if not used
-}
+  alias = "eks"
 
-provider "kubernetes" {
-  alias                  = "eks"
-  host                   = data.aws_eks_cluster.eks.endpoint
-  cluster_ca_certificate = base64decode(data.aws_eks_cluster.eks.certificate_authority[0].data)
-  token                  = data.aws_eks_cluster_auth.eks.token
-  
+  host                   = var.eks_cluster_endpoint != "https://dummy" ? var.eks_cluster_endpoint : null
+  cluster_ca_certificate = var.eks_cluster_ca != "ZHVtbXk=" ? base64decode(var.eks_cluster_ca) : null
+  token                  = var.eks_cluster_ca != "ZHVtbXk=" ? data.aws_eks_cluster_auth.eks.token : null
 }
 
 provider "helm" {
+  alias = "eks"
   kubernetes {
-    host                   = data.aws_eks_cluster.eks.endpoint
-    cluster_ca_certificate = base64decode(data.aws_eks_cluster.eks.certificate_authority[0].data)
-    token                  = data.aws_eks_cluster_auth.eks.token
+    host                   = var.eks_cluster_endpoint != "https://dummy" ? var.eks_cluster_endpoint : null
+    cluster_ca_certificate = var.eks_cluster_ca != "ZHVtbXk=" ? base64decode(var.eks_cluster_ca) : null
+    token                  = var.eks_cluster_ca != "ZHVtbXk=" ? data.aws_eks_cluster_auth.eks.token : null
   }
 }
 
-# provider "helm" {
-#   kubernetes {
-#     host                   = data.aws_eks_cluster.eks.endpoint
-#     cluster_ca_certificate = base64decode(data.aws_eks_cluster.eks.certificate_authority[0].data)
-#     token                  = data.aws_eks_cluster_auth.eks.token
-#   }
-# }
+
+data "aws_eks_cluster_auth" "eks" {
+  name = var.eks_cluster_name
+}
+
+data "aws_eks_cluster" "eks" {
+  name = var.eks_cluster_name
+}

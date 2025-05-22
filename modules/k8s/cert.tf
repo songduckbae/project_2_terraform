@@ -1,9 +1,9 @@
-resource "kubernetes_deployment_v1" "home_deploy" {
+resource "kubernetes_deployment_v1" "cert_deploy" {
   provider = kubernetes
   metadata {
-    name = "home-deploy"
+    name = "cert-deploy"
     labels = {
-      app = "home"
+      app = "cert"
     }
   }
 
@@ -11,18 +11,18 @@ resource "kubernetes_deployment_v1" "home_deploy" {
     replicas = 2
     selector {
       match_labels = {
-        app = "home"
+        app = "cert"
       }
     }
     template {
       metadata {
         labels = {
-          app = "home"
+          app = "cert"
         }
       }
       spec {
         container {
-          name  = "home-ctn"
+          name  = "cert-ctn"
           image = "jinsse/univ-nginx:1.0"
           port {
             container_port = 80
@@ -43,14 +43,14 @@ resource "kubernetes_deployment_v1" "home_deploy" {
   }
 }
 
-resource "kubernetes_service_v1" "home_service" {
+resource "kubernetes_service_v1" "cert_service" {
   provider = kubernetes
   metadata {
-    name = "home-service"
+    name = "cert-service"
   }
   spec {
     selector = {
-      app = "home"
+      app = "cert"
     }
     port {
       protocol    = "TCP"
