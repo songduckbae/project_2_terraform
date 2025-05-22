@@ -75,9 +75,9 @@ module "k8s" {
 module "karpenter" {
   source = "./modules/karpenter"
 
-  cluster_name      = module.eks.cluster_name
-  cluster_endpoint  = module.eks.cluster_endpoint
-  oidc_provider_arn = module.eks.oidc_provider_arn
+  cluster_name        = module.eks.cluster_name
+  cluster_endpoint    = module.eks.cluster_endpoint
+  oidc_provider_arn   = module.eks.oidc_provider_arn
 
   depends_on = [
     module.eks,
@@ -86,7 +86,7 @@ module "karpenter" {
   ]
 
   providers = {
-    helm       = helm.eks
     kubernetes = kubernetes.eks
+    helm       = helm.eks
   }
 }

@@ -37,6 +37,7 @@ resource "aws_subnet" "private_subnets" {
   tags = {
     Name = "eks-private-${count.index}"
     "kubernetes.io/role/internal-elb" = "1"
+    "kubernetes.io/cluster/univ-eks" = "owned"
   }
 }
 

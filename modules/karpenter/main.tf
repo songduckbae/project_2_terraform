@@ -7,6 +7,7 @@ resource "kubernetes_manifest" "karpenter_provisioner" {
     }
     spec = {
       provider = {
+        instanceProfile = aws_iam_instance_profile.karpenter_node.name
         subnetSelector = {
           "kubernetes.io/cluster/${var.cluster_name}" = "owned"
         }
