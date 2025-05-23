@@ -29,12 +29,12 @@ resource "kubernetes_deployment_v1" "class_deploy" {
           }
           resources {
             limits = {
-              memory = "1Gi"
-              cpu    = "1"
+              memory = "32Mi"
+              cpu    = "250m"
             }
             requests = {
-              memory = "1Gi"
-              cpu    = "1"
+              memory = "32Mi"
+              cpu    = "250m"
             }
           }
         }

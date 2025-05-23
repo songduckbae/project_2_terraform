@@ -44,7 +44,14 @@ data "aws_iam_policy_document" "karpenter_controller_policy" {
       "ec2:DescribeInstanceTypes",
       "ec2:DescribeInstanceTypeOfferings",
       "ec2:DescribeAvailabilityZones",
-      "ec2:DescribeSubnets"
+      "ec2:DescribeSubnets",
+      "ec2:DescribePlacementGroups",
+      "ec2:GetLaunchTemplateData",
+      "ec2:CreateLaunchTemplateVersion",
+      "ec2:ModifyInstanceAttribute",
+      "ec2:DescribeVolumes",
+      "ec2:AttachVolume",
+      "elasticloadbalancing:*"
       # 필요에 따라 공식문서에서 추가 권한 더 삽입
     ]
     resources = ["*"]
@@ -54,6 +61,7 @@ data "aws_iam_policy_document" "karpenter_controller_policy" {
 
 # 4. 위 Policy를 실제 AWS에 생성
 resource "aws_iam_policy" "karpenter_controller" {
+  provider = aws.use1
   name   = "KarpenterControllerPolicy"
   policy = data.aws_iam_policy_document.karpenter_controller_policy.json
   

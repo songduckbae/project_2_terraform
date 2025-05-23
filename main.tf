@@ -88,5 +88,7 @@ module "karpenter" {
   providers = {
     kubernetes = kubernetes.eks
     helm       = helm.eks
+    aws       = aws
+    aws.use1 = aws.use1
   }
 }

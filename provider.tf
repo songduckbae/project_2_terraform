@@ -2,6 +2,11 @@ provider "aws" {
   region = "ap-northeast-2"
 }
 
+# 가격 조회용
+provider "aws" {
+  alias = "use1"
+  region = "us-east-1"
+}
 
 provider "kubernetes" {
   alias = "eks"
