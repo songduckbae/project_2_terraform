@@ -48,11 +48,11 @@ resource "aws_eks_node_group" "univ_ng" {
   node_group_name = "univ_ng"
   node_role_arn   = aws_iam_role.univ_nodegroup_role.arn
   subnet_ids      = var.private_subnet_ids
-  instance_types = ["t3.small"]
+  instance_types = ["t3a.2xlarge"]
 
   scaling_config {
     desired_size = 3
-    max_size     = 6
+    max_size     = 3
     min_size     = 3
   }
 
@@ -108,7 +108,7 @@ data "aws_caller_identity" "current" {}
 
 resource "aws_eks_access_entry" "sso_admin" {
   cluster_name  = aws_eks_cluster.univ_eks.name
-  principal_arn = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/aws-reserved/sso.amazonaws.com/ap-northeast-2/AWSReservedSSO_AdministratorAccess_be811d95ad9f0f4a" # SSO 역할 ARN
+  principal_arn = "arn:aws:iam::886723286293:role/aws-reserved/sso.amazonaws.com/ap-northeast-2/AWSReservedSSO_AdministratorAccess_be811d95ad9f0f4a" # SSO 역할 ARN
 }
 
 resource "aws_eks_access_policy_association" "sso_admin_policy" {
