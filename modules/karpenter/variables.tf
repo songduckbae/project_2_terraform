@@ -1,9 +1,9 @@
-variable "cluster_name" {
+variable "eks_cluster_name" {
   description = "EKS cluster name"
   type        = string
 }
 
-variable "cluster_endpoint" {
+variable "eks_cluster_endpoint" {
   type = string
 }
 

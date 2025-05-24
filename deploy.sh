@@ -30,27 +30,22 @@ aws eks update-kubeconfig --region ap-northeast-2 --name "$EKS_CLUSTER_NAME"
 echo "[4/7] Karpenter Helm Chart/CRD만 먼저 설치..."
 terraform apply -target=module.karpenter.helm_release.karpenter \
   -var="eks_cluster_endpoint=$EKS_CLUSTER_ENDPOINT" \
-  -var="eks_cluster_ca=$EKS_CLUSTER_CA" \
   -var="eks_cluster_name=$EKS_CLUSTER_NAME" \
   -auto-approve
 
 # 5단계: CRD 생성 완료까지 대기
-echo "⏳ Karpenter CRD 등록 대기 중... (30초)"
-sleep 30
-kubectl get crd | grep karpenter
+echo "⏳ Karpenter CRD 등록 대기 중..."
+until kubectl get crd ec2nodeclasses.karpenter.k8s.aws &>/dev/null; do sleep 2; done
+until kubectl get crd nodepools.karpenter.sh &>/dev/null; do sleep 2; done
+echo "✅ 모든 Karpenter CRD 인식 완료됨"
 
-# ✅ YAML로 Provisioner 수동 적용
-echo "[INFO] 기존 Provisioner 리소스 삭제 중 (충돌 방지)"
-kubectl delete provisioner default --ignore-not-found
-
-echo "[INFO] Provisioner 리소스 YAML로 수동 적용 중..."
-kubectl apply -f modules/karpenter/provisioner.yaml
+# ✅ YAML로 NodePool + EC2NodeClass 수동 적용
+echo "[INFO] NodePool/EC2NodeClass 리소스 YAML로 적용 중..."
 
 # 6단계: 나머지 Karpenter 리소스 및 전체 리소스 적용
 echo "[6/7] 전체 리소스 최종 적용 (ALB, K8s 등)..."
 terraform apply \
   -var="eks_cluster_endpoint=$EKS_CLUSTER_ENDPOINT" \
-  -var="eks_cluster_ca=$EKS_CLUSTER_CA" \
   -var="eks_cluster_name=$EKS_CLUSTER_NAME" \
   -auto-approve
 

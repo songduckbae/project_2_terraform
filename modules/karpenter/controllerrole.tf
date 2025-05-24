@@ -61,7 +61,7 @@ data "aws_iam_policy_document" "karpenter_controller_policy" {
 
 # 4. 위 Policy를 실제 AWS에 생성
 resource "aws_iam_policy" "karpenter_controller" {
-  # provider = aws.use1
+  provider = aws.use1
   name   = "KarpenterControllerPolicy"
   policy = data.aws_iam_policy_document.karpenter_controller_policy.json
   

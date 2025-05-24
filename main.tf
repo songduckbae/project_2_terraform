@@ -75,20 +75,20 @@ module "k8s" {
 module "karpenter" {
   source = "./modules/karpenter"
 
-  cluster_name        = module.eks.cluster_name
-  cluster_endpoint    = module.eks.cluster_endpoint
-  oidc_provider_arn   = module.eks.oidc_provider_arn
+  eks_cluster_name     = module.eks.cluster_name
+  eks_cluster_endpoint = module.eks.cluster_endpoint
+  oidc_provider_arn    = module.eks.oidc_provider_arn
+
+  providers = {
+    kubernetes = kubernetes.eks   
+    helm       = helm.eks        
+    aws        = aws
+    aws.use1   = aws.use1
+  }
 
   depends_on = [
     module.eks,
     module.alb,
     null_resource.wait_for_cluster
   ]
-
-  providers = {
-    kubernetes = kubernetes.eks
-    helm       = helm.eks
-    aws       = aws
-    aws.use1 = aws.use1
-  }
 }
